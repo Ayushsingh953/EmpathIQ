@@ -13,6 +13,7 @@ import GetStarted from "./screens/auth/getStarted";
 import Screen1 from "./screens/authenticated/screen1";
 import Screen2 from "./screens/authenticated/screen2";
 import Screen3 from "./screens/authenticated/screen3";
+import Toast from "react-native-toast-message";
 
 const Tab=createBottomTabNavigator();
 const Stack=createNativeStackNavigator();
@@ -163,6 +164,7 @@ export default function App(){
     return (
       <AuthContextProvider>
         <Navigation />
+        <Toast />
       </AuthContextProvider>
     )
 }
