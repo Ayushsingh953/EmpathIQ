@@ -47,7 +47,7 @@ const TabButton = props => {
           <Ionicons
             name={focused ? name.active : name.inactive}
             size={size}
-            color={focused ? '#5c66be' : '#595e87'}
+            color={focused ? '#8a9ec4' : '#b4bdd9'}
           />
           {/* <Text style={{ fontSize: 10, fontFamily: 'cursive' }}>{tag}</Text> */}
         </Animatable.View>
@@ -79,7 +79,7 @@ const TabButton = props => {
               tabBarButton: props => (
                 <TabButton
                   {...props}
-                  name={{active: 'home', inactive: 'home'}}
+                  name={{active: 'home', inactive: 'home-outline'}}
                   tag={'Screen1'}
                   size={26}
                 />
@@ -92,7 +92,7 @@ const TabButton = props => {
             options={{
               tabBarIcon: ({focused, color}) => (
                 <Ionicons
-                  name={focused ? 'compass' : 'compass-outline'}
+                  name={focused ? 'search' : 'search'}
                   size={26}
                   color={color}
                 />
@@ -100,7 +100,7 @@ const TabButton = props => {
               tabBarButton: props => (
                 <TabButton
                   {...props}
-                  name={{active: 'compass', inactive: 'compass-outline'}}
+                  name={{active: 'search', inactive: 'search-outline'}}
                   tag={'Screen2'}
                   size={26}
                 />
@@ -113,7 +113,7 @@ const TabButton = props => {
             options={{
               tabBarIcon: ({focused, color}) => (
                 <Feather
-                  name={focused ? 'search' : 'search'}
+                  name={focused ? 'profile' : 'profile'}
                   size={26}
                   color={color}
                 />
@@ -122,8 +122,8 @@ const TabButton = props => {
                 <TabButton
                   {...props}
                   name={{
-                    active: 'search',
-                    inactive: 'search',
+                    active: 'person',
+                    inactive: 'person-outline',
                   }}
                   tag={'Screen3'}
                   size={26}
