@@ -1,7 +1,7 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {Ionicons, AntDesign, Feather} from '@expo/vector-icons';
 import * as Animatable from "react-native-animatable";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -14,6 +14,8 @@ import Screen1 from "./screens/authenticated/screen1";
 import Screen2 from "./screens/authenticated/screen2";
 import Screen3 from "./screens/authenticated/screen3";
 import Toast from "react-native-toast-message";
+import { FIREBASE_AUTH } from "./firebaseConfig";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Tab=createBottomTabNavigator();
 const Stack=createNativeStackNavigator();
@@ -151,7 +153,31 @@ function AuthScreens() {
 
   function Navigation() {
 
+    const[loading,setLoading] = useState(false);
     const authCtx=useContext(AuthContext);
+
+    useEffect(()=>{
+      setLoading(true);
+      onAuthStateChanged(FIREBASE_AUTH,(user) => {
+        if (user) {
+          const uid = user.uid;
+          authCtx.setUser(user);
+          authCtx.authenticate(uid);
+          
+        } else {
+          authCtx.authenticate();
+        }
+        setLoading(false);
+      })
+      
+    },[])
+
+    if(loading){
+      return <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+        <ActivityIndicator size="large" animating={true} />
+        <Text>Loading...</Text>
+      </View>
+    }
 
     return (
       <NavigationContainer>

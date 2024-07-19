@@ -3,7 +3,11 @@ import { StatusBar } from "expo-status-bar";
 import { Dimensions, Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Input from "../../components/input";
 import CustomButton from "../../components/customButton";
-import { useState } from "react";
+import {useState } from "react";
+import LoadingModal from "../../components/loadingModal";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
+import showToast from "../../utils/showToast";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const {width,height} = Dimensions.get("screen");
 
@@ -13,10 +17,47 @@ export default function Signup({navigation}){
     const[email,setEmail] = useState();
     const[password,setPassword] = useState();
     const[confirmPassword,setConfirmPssword] = useState();
+    const[loading,setLoading] = useState(false);
+
+    async function SignupHandler(){
+        if(!username || !email || !password || !confirmPassword){
+          showToast("Alert","All fields are required!","error","red")
+          return;
+        }
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const validEmail=emailPattern.test(email);
+        if(!validEmail){
+            showToast("Alert","Please provided valid email!","error","red")
+          return;
+        }
+        if(password.length<6){
+            showToast("Alert","Password should contain atleast 6 characters!","error","red")
+          return;
+          }
+        if(confirmPassword!==password){
+            showToast("Alert","Passwords don't match!","error","red")
+          return;
+          }
+        setLoading(true);
+        try{
+          const response = await createUserWithEmailAndPassword(FIREBASE_AUTH,email,password);
+          await updateProfile(FIREBASE_AUTH.currentUser,{
+            displayName:username
+          })
+          showToast("success","User created!","success","green")
+          console.log(response.user);
+          
+        }catch(err){
+          console.log("Error Signing up user ",err);
+          showToast("Error","Something went wrong!","error","red");
+          }
+        setLoading(false);
+      }
 
     return (
         <ScrollView contentContainerStyle={{width:width,height:height,alignItems:"center"}}>
         <StatusBar style="dark" />
+        <LoadingModal visible={loading} label="Creating user..." />
          <LinearGradient colors={["#e2d5c6","#b4bdd9","#8a9ec4"]} style={StyleSheet.absoluteFillObject}/>
          <Image source={require("../../assets/login.png")} style={{width:width*0.9,height:height*0.35,marginTop:20}} resizeMode="contain"/>
          <Text style={{fontSize:40,color:"white",fontWeight:900}}>Signup</Text>
@@ -34,7 +75,7 @@ export default function Signup({navigation}){
             <Input label="PASSWORD :" type="default" secure={true} placeholder="Enter password" value={password} onChangeText={setPassword} />
             <Input label="CONFIRM PASSWORD :" type="default" secure={true} placeholder="Confirm password" value={confirmPassword} onChangeText={setConfirmPssword} />
          </View>
-         <CustomButton label="SIGNUP" styles={{button:styles.button,text:styles.text}} />
+         <CustomButton label="SIGNUP" styles={{button:styles.button,text:styles.text}} onPress={SignupHandler}/>
          </ScrollView>
     )
 }
